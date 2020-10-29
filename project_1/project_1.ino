@@ -45,7 +45,7 @@ void loop() {
      u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
      u8g2.drawStr(58,29, symb[i].c_str());  // write something to the internal memory
      u8g2.sendBuffer();
-     digitalWrite(LED_BUILTIN, LOW);
+     digitalWrite(LED_BUILTIN, HIGH);
      if(digitalRead(PIN_RHT) == LOW)
      {
       i += 1;
@@ -70,29 +70,31 @@ void loop() {
         output.push_back(Morze[i]);
         ol_output.push_back(symb[i]);
      }
+     delay(100);
      if(digitalRead(PIN_BUTTON) == LOW)
      {
         for(int j = 0; j < output.size(); j++)
         {
           u8g2.clearBuffer();          // clear the internal memory
           u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+          u8g2.sendBuffer();
           u8g2.drawStr(58,29, ol_output[j].c_str());  // write something to the internal memory
           u8g2.sendBuffer();
           for(int u = 0; u < output[j].size(); u++)
           {
             if(output[j][u] == '1')
             {
-              digitalWrite(LED_BUILTIN, HIGH);
-              delay(1000);
               digitalWrite(LED_BUILTIN, LOW);
-              delay(100);
+              delay(1200);
+              digitalWrite(LED_BUILTIN, HIGH);
+              delay(300);
             }
             else
             {
-              digitalWrite(LED_BUILTIN, HIGH);
-              delay(400);
               digitalWrite(LED_BUILTIN, LOW);
-              delay(100);
+              delay(500);
+              digitalWrite(LED_BUILTIN, HIGH);
+              delay(300);
             }
           }
         }
