@@ -16,16 +16,21 @@ vector <string> output;
 vector <string> ol_output;
 
 int i = 0;
-int x0 = 774; //зависит от начального значения джойстика(надо проверить)
-int x;
 
-#define PIN_VRX A0 //пин для джойстика(только одну ось)
-#define PIN_BUTTON_J 3 //n-ный пин для кнопки джойстика
+const int PIN_LFT = 8; //пин для джойстика(только одну ось)
+const int PIN_RHT = 7; //n-ный пин для кнопки джойстика
 
-#define PIN_BUTTON  4 //пин для кнопки отправки
+const int PIN_MID = 6; //пин для кнопки отправки
+const int PIN_BUTTON = 5;
 
  void setup(void) {
    u8g2.begin();
+   Serial.begin(9600);
+   pinMode(PIN_LFT, INPUT_PULLUP);
+   pinMode(PIN_RHT, INPUT_PULLUP);
+   pinMode(PIN_MID, INPUT_PULLUP);
+   pinMode(PIN_BUTTON, INPUT_PULLUP);
+   
    pinMode(LED_BUILTIN, OUTPUT); //пин для светодиода
 }
 
@@ -36,16 +41,26 @@ void loop() {
      u8g2.drawStr(58,29, alpha[i].c_str());  // write something to the internal memory
      u8g2.sendBuffer();         // transfer internal memory to the display
      delay(3000);*/
-     x = analogRead(PIN_VRX);
-     if(abs(x-x0) > 100)
-     {
-        i = (i+1) % 36;
-     }
      u8g2.clearBuffer();          // clear the internal memory
      u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
      u8g2.drawStr(58,29, symb[i].c_str());  // write something to the internal memory
      u8g2.sendBuffer();
-     if(digitalRead(PIN_BUTTON_J) == LOW)
+     digitalWrite(LED_BUILTIN, LOW);
+     if(digitalRead(PIN_RHT) == LOW)
+        i = (i+1) / 36;
+     if(digitalRead(PIN_LFT) == LOW)
+     {
+      i -= 1;
+      if(i == -1)
+        i = 35;
+     }
+     delay(100);
+     Serial.println(i);
+     u8g2.clearBuffer();          // clear the internal memory
+     u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
+     u8g2.drawStr(58,29, symb[i].c_str());  // write something to the internal memory
+     u8g2.sendBuffer();
+     if(digitalRead(PIN_MID) == HIGH)
      {
         output.push_back(Morze[i]);
         ol_output.push_back(symb[i]);
