@@ -17,11 +17,11 @@ vector <string> ol_output;
 
 int i = 0;
 
-const int PIN_LFT = 8; //пин для джойстика(только одну ось)
-const int PIN_RHT = 7; //n-ный пин для кнопки джойстика
+#define PIN_LFT D3 //пин для джойстика(только одну ось)
+#define PIN_RHT D7 //n-ный пин для кнопки джойстика
 
-const int PIN_MID = 6; //пин для кнопки отправки
-const int PIN_BUTTON = 5;
+#define PIN_MID D6 //пин для кнопки отправки
+#define PIN_BUTTON D5
 
  void setup(void) {
    u8g2.begin();
@@ -47,20 +47,25 @@ void loop() {
      u8g2.sendBuffer();
      digitalWrite(LED_BUILTIN, LOW);
      if(digitalRead(PIN_RHT) == LOW)
-        i = (i+1) / 36;
+     {
+      i += 1;
+      if(i == 36)
+        i = 0;
+     }
      if(digitalRead(PIN_LFT) == LOW)
      {
       i -= 1;
       if(i == -1)
         i = 35;
      }
-     delay(100);
+     if(digitalRead(PIN_LFT) == HIGH)
      Serial.println(i);
+     delay(100);
      u8g2.clearBuffer();          // clear the internal memory
      u8g2.setFont(u8g2_font_logisoso28_tr);  // choose a suitable font at https://github.com/olikraus/u8g2/wiki/fntlistall
      u8g2.drawStr(58,29, symb[i].c_str());  // write something to the internal memory
      u8g2.sendBuffer();
-     if(digitalRead(PIN_MID) == HIGH)
+     if(digitalRead(PIN_MID) == LOW)
      {
         output.push_back(Morze[i]);
         ol_output.push_back(symb[i]);
@@ -92,6 +97,7 @@ void loop() {
           }
         }
         output.clear();
+        ol_output.clear();
         i = 0;
      }
 }
